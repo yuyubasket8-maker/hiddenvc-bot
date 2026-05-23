@@ -358,7 +358,7 @@ cron.schedule('* * * * *', () => {
 });
 
 // Render Health Check
-const PORT = process.env.PORT || 10000;
+const PORT = Number(process.env.PORT) || 10000;
 
 http.createServer((req, res) => {
     res.writeHead(200);
