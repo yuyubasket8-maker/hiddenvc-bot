@@ -12,6 +12,7 @@ import {
     MessageFlags,
     UserSelectMenuBuilder
 } from "discord.js";
+import http from "http";
 import dotenv from "dotenv";
 import { HiddenVoiceChannelManager } from "./HiddenVoiceChannelManager";
 import cron from "node-cron";
@@ -326,21 +327,42 @@ client.login(process.env.DISCORD_TOKEN).then(() => {
 cron.schedule('* * * * *', () => {
     hiddenChannelManager.getChannelArray().map(async (channel) => {
         const voiceChannel = client.channels.cache.get(channel);
+
         if (voiceChannel && voiceChannel.type === ChannelType.GuildVoice) {
             const members = voiceChannel.members;
-            //チャンネルに誰もいないかつ作成されてから3分経過しているチャンネルか判定
+
             const createdAt = voiceChannel.createdAt;
             const now = new Date();
             const diff = Math.abs(now.getTime() - createdAt.getTime());
             const diffMinutes = Math.floor(diff / (1000 * 60));
+
             if (members.size === 0 && diffMinutes > 3) {
-                // チャンネルを削除
-                const owner = hiddenChannelManager.getChannelOwner(voiceChannel.guild.id, voiceChannel.id);
+                const owner = hiddenChannelManager.getChannelOwner(
+                    voiceChannel.guild.id,
+                    voiceChannel.id
+                );
+
                 if (owner) {
-                    await hiddenChannelManager.deleteHiddenVoiceChannel(voiceChannel.guild.id, owner);
-                    logger.info(`Deleted empty channel ${voiceChannel.name} with ID ${voiceChannel.id}`);
+                    await hiddenChannelManager.deleteHiddenVoiceChannel(
+                        voiceChannel.guild.id,
+                        owner
+                    );
+
+                    logger.info(
+                        `Deleted empty channel ${voiceChannel.name} with ID ${voiceChannel.id}`
+                    );
                 }
             }
         }
-    })
+    });
+});
+
+// Render Health Check
+const PORT = process.env.PORT || 10000;
+
+http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end("Bot running");
+}).listen(PORT, "0.0.0.0", () => {
+    logger.info(`Health check server running on ${PORT}`);
 });
