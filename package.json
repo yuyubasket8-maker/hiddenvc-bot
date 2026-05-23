@@ -6,6 +6,9 @@
     "node-cron": "^3.0.3"
   },
   "devDependencies": {
-    "@types/node-cron": "^3.0.11"
+    "@types/node": "^25.9.1",
+    "@types/node-cron": "^3.0.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
   }
 }
