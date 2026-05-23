@@ -1,9 +1,9 @@
 {
   "name": "hiddenvc-bot",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "src/hiddenVC.ts",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "npx ts-node src/hiddenVC.ts"
   },
   "dependencies": {
     "discord.js": "^14.18.0",
